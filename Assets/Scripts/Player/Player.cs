@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Player : MonoBehaviour
 {
@@ -11,28 +9,49 @@ public class Player : MonoBehaviour
     //STATES
     string currentAnimation;
     bool isRunning;
+    bool isGrounded;
 
     //CACHED REFERENCES
     Rigidbody2D rigidBody2D;
-    SpriteRenderer spriteRenderer;
     Animator animator;
+    Collider2D coll2D;
 
     //STRING REFERENCES
     static string HORIZONTAL_AXIS = "Horizontal";
-    static string JUMP_AXIS = "Jump";
+    static string JUMP_BUTTON = "Jump";
+    static string GROUND_LAYER = "Ground";
 
     //ANIMATION STATES
     static string PLAYER_IDLE = "player_idle";
     static string PLAYER_RUNNING = "player_running";
+    static string PLAYER_JUMPING_UP = "player_jump_up";
+    static string PLAYER_JUMPING_DOWN = "player_jump_down";
 
     private void Start()
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
-        spriteRenderer = transform.GetComponentInChildren<SpriteRenderer>();
         animator = GetComponent<Animator>();
+        coll2D = GetComponent<Collider2D>();
     }
 
     private void Update()
+    {
+        ManageBools();
+        ManageInputs();
+        FlipPlayer();
+        UpdateAnimationState();
+    }
+
+    //MANAGERS
+    private void ManageBools()
+    {
+        isGrounded = coll2D.IsTouchingLayers(LayerMask.GetMask(GROUND_LAYER));
+        isRunning = Mathf.Abs(rigidBody2D.velocity.x) > 0; //Mathf.Abs is used to convert any negative value to a positive one
+    }
+
+
+    //INPUTS
+    private void ManageInputs()
     {
         Run();
         Jump();
@@ -44,27 +63,24 @@ public class Player : MonoBehaviour
         Vector2 playerVelocity = new Vector2
             (controlThrow * moveSpeed, rigidBody2D.velocity.y);
         rigidBody2D.velocity = playerVelocity;
-
-        bool isRunning = Mathf.Abs(rigidBody2D.velocity.x) > 0; //Mathf.Abs is used to convert any negative value to a positive one
-
-        if (isRunning)
-        {
-            transform.localScale = new Vector2(Mathf.Sign(rigidBody2D.velocity.x), 1f); //Mathf.Sign returns a value of 1 or -1
-            ChangeAnimationState(PLAYER_RUNNING);
-        }
-        else
-        {
-            ChangeAnimationState(PLAYER_IDLE);
-        }
     }
 
     private void Jump()
     {
-        //var deltaY = Input.GetAxis(JUMP_AXIS) * Time.deltaTime * jumpForce;
-        //transform.position = new Vector2(transform.position.x, transform.position.y + deltaY);
-        if (Input.GetKeyDown(KeyCode.Space))
+
+        if (Input.GetButtonDown(JUMP_BUTTON) && isGrounded)
         {
-            rigidBody2D.velocity = new Vector2(0, jumpForce);
+            rigidBody2D.velocity = new Vector2(rigidBody2D.velocity.x, jumpForce);
+        }
+    }
+
+
+    //ANIMATION
+    private void FlipPlayer()
+    {
+        if (isRunning)
+        {
+            transform.localScale = new Vector2(Mathf.Sign(rigidBody2D.velocity.x), 1f); //Mathf.Sign returns a value of 1 or -1
         }
     }
 
@@ -74,4 +90,26 @@ public class Player : MonoBehaviour
         animator.Play(newAnimation);
         currentAnimation = newAnimation;
     }
+    
+    private void UpdateAnimationState()
+    {
+        if (!isGrounded && rigidBody2D.velocity.y <= 0)
+        {
+            ChangeAnimationState(PLAYER_JUMPING_DOWN);
+        }
+        else if (!isGrounded && rigidBody2D.velocity.y > 0)
+        {
+            ChangeAnimationState(PLAYER_JUMPING_UP);
+        }
+
+        else if (isRunning && isGrounded)
+        {
+            ChangeAnimationState(PLAYER_RUNNING);
+        }
+        else if (!isRunning && isGrounded)
+        {
+            ChangeAnimationState(PLAYER_IDLE);
+        }
+    }
+
 }
