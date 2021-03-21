@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 
     //STATES
     string currentAnimation;
-
+    bool isRunning;
 
     //CACHED REFERENCES
     Rigidbody2D rigidBody2D;
@@ -32,31 +32,39 @@ public class Player : MonoBehaviour
 
     private void Update()
     {
-        Move();
+        Run();
         Jump();
     }
 
-    private void Move()
+    private void Run()
     {
-        var deltaX = Input.GetAxis(HORIZONTAL_AXIS) * Time.deltaTime * moveSpeed;
-        transform.position = new Vector2(transform.position.x + deltaX, transform.position.y);
-        ChangeAnimationState(PLAYER_RUNNING);
+        float controlThrow = Input.GetAxis(HORIZONTAL_AXIS);                         //varies between 1 and -1
+        Vector2 playerVelocity = new Vector2
+            (controlThrow * moveSpeed, rigidBody2D.velocity.y);
+        rigidBody2D.velocity = playerVelocity;
 
-        var currentXPosition = transform.position.x;
-        if(transform.position.x > currentXPosition)
+        if(controlThrow < 0)
         {
-            Debug.Log(transform.position.x - currentXPosition);
-            transform.rotation = new Quaternion(0f, 0, 0f, 0f);
-            currentXPosition = transform.position.x;
+            transform.rotation = new Quaternion(0, 180, 0, 0);
         }
-        else if (transform.position.x < currentXPosition)
+        else if (controlThrow > 0)
         {
-            Debug.Log(transform.position.x - currentXPosition);
-            transform.rotation = new Quaternion(0f, 180f, 0f, 0f);
-            currentXPosition = transform.position.x;
+            transform.rotation = new Quaternion(0, 0, 0, 0);
+
         }
 
+        if (controlThrow == 0)   { isRunning = false; }
+        else                    { isRunning = true; }
 
+        if (isRunning)
+        {
+            ChangeAnimationState(PLAYER_RUNNING);
+        }
+        else
+        {
+            ChangeAnimationState(PLAYER_IDLE);
+        }
+         
     }
 
     private void Jump()

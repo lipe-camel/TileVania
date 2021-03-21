@@ -9665,6 +9665,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1615424568, guid: 00f4bd19699769d42bef6d652d55e7d2, type: 3}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615424568, guid: 00f4bd19699769d42bef6d652d55e7d2, type: 3}
       propertyPath: m_GravityScale
       value: 2
       objectReference: {fileID: 0}
@@ -9674,7 +9678,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1615424569, guid: 00f4bd19699769d42bef6d652d55e7d2, type: 3}
       propertyPath: moveSpeed
-      value: 10
+      value: 5000
       objectReference: {fileID: 0}
     - target: {fileID: 4683666484576577249, guid: 00f4bd19699769d42bef6d652d55e7d2,
         type: 3}
