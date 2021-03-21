@@ -16,7 +16,9 @@ public class Player : MonoBehaviour
     //CACHED REFERENCES
     Rigidbody2D rigidBody2D;
     Animator animator;
-    Collider2D coll2D;
+    CapsuleCollider2D BodyCollider;
+    BoxCollider2D FeetCollider;
+
     float defaultGravity;
 
     //STRING REFERENCES
@@ -37,7 +39,8 @@ public class Player : MonoBehaviour
     {
         rigidBody2D = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
-        coll2D = GetComponent<Collider2D>();
+        BodyCollider = GetComponent<CapsuleCollider2D>();
+        FeetCollider = GetComponent<BoxCollider2D>();
         defaultGravity = rigidBody2D.gravityScale;
     }
 
@@ -52,9 +55,9 @@ public class Player : MonoBehaviour
     //MANAGERS
     private void ManageBools()
     {
-        isGrounded = coll2D.IsTouchingLayers(LayerMask.GetMask(GROUND_LAYER));
+        isGrounded = FeetCollider.IsTouchingLayers(LayerMask.GetMask(GROUND_LAYER));
         isRunning = Mathf.Abs(rigidBody2D.velocity.x) > 0; //Mathf.Abs is used to convert any negative value to a positive one
-        isTouchingLadder = coll2D.IsTouchingLayers(LayerMask.GetMask(LADDER_LAYER));
+        isTouchingLadder = FeetCollider.IsTouchingLayers(LayerMask.GetMask(LADDER_LAYER));
     }
 
 
@@ -69,8 +72,8 @@ public class Player : MonoBehaviour
     private void Run()
     {
         float controlThrow = Input.GetAxis(HORIZONTAL_AXIS); //varies between 1 and -1
-        Vector2 playerVelocity = new Vector2(controlThrow * runSpeed, rigidBody2D.velocity.y);
-        rigidBody2D.velocity = playerVelocity;
+        Vector2 runVelocity = new Vector2(controlThrow * runSpeed, rigidBody2D.velocity.y);
+        rigidBody2D.velocity = runVelocity;
     }
 
     private void ClimbLadders()
@@ -80,8 +83,8 @@ public class Player : MonoBehaviour
         if (isTouchingLadder)
         {
             rigidBody2D.gravityScale = 0;
-            Vector2 playerVelocity = new Vector2(rigidBody2D.velocity.x, controlThrow * climbSpeed);
-            rigidBody2D.velocity = playerVelocity;
+            Vector2 climbVelocity = new Vector2(rigidBody2D.velocity.x, controlThrow * climbSpeed);
+            rigidBody2D.velocity = climbVelocity;
         }
         else
         {
