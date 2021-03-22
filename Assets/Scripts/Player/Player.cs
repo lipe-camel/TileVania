@@ -79,7 +79,6 @@ public class Player : MonoBehaviour
     private void ClimbLadders()
     {
         float controlThrow = Input.GetAxis(VERTICAL_AXIS); //varies between 1 and -1
-        Debug.Log(isTouchingLadder);
         if (isTouchingLadder)
         {
             rigidBody2D.gravityScale = 0;
