@@ -30,6 +30,7 @@ public class Player : MonoBehaviour
     static string GROUND_LAYER = "Ground";
     static string LADDER_LAYER = "Ladder";
     static string ENEMY_LAYER = "Enemy";
+    static string HAZARD_LAYER = "Hazard";
 
     //ANIMATION STATES
     static string PLAYER_IDLE = "player_idle";
@@ -67,9 +68,11 @@ public class Player : MonoBehaviour
 
     private void Die()
     {
-        if (BodyCollider.IsTouchingLayers(LayerMask.GetMask(ENEMY_LAYER)) && isAlive)
+        if (!isAlive) { return; }
+        if (BodyCollider.IsTouchingLayers(LayerMask.GetMask(ENEMY_LAYER, HAZARD_LAYER)))
         {
             isAlive = false;
+            FindObjectOfType<GameSession>().ProcessPlayerDeath();
             rigidBody2D.velocity = deathKick;
         }
     }
