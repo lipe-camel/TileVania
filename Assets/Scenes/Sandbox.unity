@@ -13350,7 +13350,7 @@ TilemapRenderer:
   m_SortingLayer: 5
   m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
-  m_ChunkCullingBounds: {x: 0, y: 0, z: 0}
+  m_ChunkCullingBounds: {x: 0.016129017, y: 0.016129017, z: 0}
   m_MaxChunkCount: 16
   m_MaxFrameAge: 16
   m_SortOrder: 0
@@ -18463,6 +18463,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1615424569, guid: 00f4bd19699769d42bef6d652d55e7d2, type: 3}
+      propertyPath: deathKick.x
+      value: 25
+      objectReference: {fileID: 0}
+    - target: {fileID: 1615424569, guid: 00f4bd19699769d42bef6d652d55e7d2, type: 3}
+      propertyPath: deathKick.y
+      value: 25
+      objectReference: {fileID: 0}
     - target: {fileID: 4683666484576577249, guid: 00f4bd19699769d42bef6d652d55e7d2,
         type: 3}
       propertyPath: m_RootOrder

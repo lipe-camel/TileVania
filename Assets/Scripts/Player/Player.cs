@@ -6,12 +6,14 @@ public class Player : MonoBehaviour
     [SerializeField] float runSpeed = 10f;
     [SerializeField] float climbSpeed = 5f;
     [SerializeField] float jumpForce = 1f;
+    [SerializeField] Vector2 deathKick;
 
     //STATES
     string currentAnimation;
     bool isRunning;
     bool isGrounded;
     bool isTouchingLadder;
+    bool isAlive = true;
 
     //CACHED REFERENCES
     Rigidbody2D rigidBody2D;
@@ -27,6 +29,7 @@ public class Player : MonoBehaviour
     static string JUMP_BUTTON = "Jump";
     static string GROUND_LAYER = "Ground";
     static string LADDER_LAYER = "Ladder";
+    static string ENEMY_LAYER = "Enemy";
 
     //ANIMATION STATES
     static string PLAYER_IDLE = "player_idle";
@@ -49,7 +52,9 @@ public class Player : MonoBehaviour
         ManageBools();
         ManageInputs();
         FlipPlayer();
-        UpdateAnimationState();
+        //UpdateAnimationState();
+        Die();
+        Debug.Log(isAlive);
     }
 
     //MANAGERS
@@ -60,13 +65,24 @@ public class Player : MonoBehaviour
         isTouchingLadder = FeetCollider.IsTouchingLayers(LayerMask.GetMask(LADDER_LAYER));
     }
 
+    private void Die()
+    {
+        if (BodyCollider.IsTouchingLayers(LayerMask.GetMask(ENEMY_LAYER)) && isAlive)
+        {
+            isAlive = false;
+            rigidBody2D.velocity = deathKick;
+        }
+    }
 
     //INPUTS
     private void ManageInputs()
     {
-        Run();
-        ClimbLadders();
-        Jump();
+        if (isAlive)
+        {
+            Run();
+            ClimbLadders();
+            Jump();
+        }
     }
 
     private void Run()
